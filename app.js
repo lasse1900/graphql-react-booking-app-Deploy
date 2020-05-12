@@ -12,6 +12,37 @@ const app = express();
 
 app.use(bodyParser.json());
 
+const events = async eventIds => {
+  try {
+    const events = await Event.find({ _id: { $in: eventIds } });
+    events.map(event => {
+      return {
+        ...event._doc,
+        _id: event.id,
+        date: new Date(event._doc.date).toISOString(),
+        creator: user.bind(this, event.creator)
+      };
+    });
+    return events;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const user = (userId) => {
+  return User.findById(userId)
+    .then(user => {
+      return {
+        ...user._doc,
+        _id: user.id,
+        createdEvents: events.bind(this, user._doc.createdEvents)
+      }
+    })
+    .catch(err => {
+      throw err
+    })
+}
+
 app.use(
   '/graphql',
   graphqlHttp({
@@ -22,12 +53,14 @@ app.use(
           description: String!
           price: Float!
           date: String!
+          creator: User!
         }
 
         type User {
           _id: ID!
           email: String!
           password: String
+          createdEvents: [Event!]
         }
 
         input EventInput {
@@ -61,7 +94,11 @@ app.use(
         return Event.find()
           .then(events => {
             return events.map(event => {
-              return { ...event._doc }
+              return {
+                ...event._doc,
+                _id: event.id,
+                creator: user.bind(this, event._doc.creator)
+              }
             });
           })
           .catch(err => {
@@ -80,7 +117,8 @@ app.use(
         return event
           .save()
           .then(result => {
-            createdEvent = { ...result._doc, _id: result._doc._id.toString() };
+            createdEvent = { ...result._doc, _id: result._doc._id.toString(), creator: user.bind(this, result._doc.creator) };
+            // createdEvent = { ...result._doc, _id: result._doc._id.toString() }; // creator needed ??
             return User.findById('5eba6e8fc79cb222e40ee886');
           })
           .then(user => {
@@ -94,7 +132,6 @@ app.use(
             return createdEvent;
           })
           .catch(err => {
-            console.log(err);
             throw err;
           })
       },
