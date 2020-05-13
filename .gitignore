@@ -9,6 +9,7 @@
 nodemon.json
 server.crt
 server.key
+/playground
 
 # testing
 /coverage
