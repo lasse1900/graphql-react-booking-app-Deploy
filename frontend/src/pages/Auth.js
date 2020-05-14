@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 
 import './Auth.css';
+import AuthContext from '../context/auth-context';
 
 class AuthPage extends Component {
   state = {
     isLogin: true
   };
+
+  static contextType = AuthContext;
+
   constructor(props) {
     super(props);
     this.emailEl = React.createRef();
@@ -60,13 +64,19 @@ class AuthPage extends Component {
       }
     })
       .then(res => {
-        if (res.status !== 200 || res.status !== 201) {
+        if (res.status !== 200 && res.status !== 201) {
           throw new Error('Failed');
         }
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
+        if (resData.data.login.token) {
+          this.context.login(
+            resData.data.login.token,
+            resData.data.login.userId,
+            resData.data.login.tokenExpiration
+          );
+        }
       })
       .catch(err => {
         console.log(err);
@@ -85,9 +95,10 @@ class AuthPage extends Component {
           <input type="password" id="password" ref={this.passwordEl} />
         </div>
         <div className="form-actions">
-          <button type="button" onClick={this.submitHandler}>Submit</button>
+          <button type="submit">Submit</button>
           <button type="button" onClick={this.switchModeHandler}>
-            Switch to {this.state.isLogin ? 'Signup' : 'Login'} </button>
+            Switch to {this.state.isLogin ? 'Signup' : 'Login'}
+          </button>
         </div>
       </form>
     );
