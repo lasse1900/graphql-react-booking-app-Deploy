@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import './Auth.css';
+import { json } from 'body-parser';
 
 class AuthPage extends Component {
   constructor(props) {
@@ -17,8 +18,36 @@ class AuthPage extends Component {
       return;
     }
 
-    console.log(email, password);
-    // ...
+    const requestBody = {
+      query: `
+        mutation {
+          createUser(userInput: {email: "${email}", password: "${password}"}){
+            _id
+            email
+          }
+        }
+      `
+    };
+
+    fetch('http://localhost:8000/graphql', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => {
+        if(res.status !== 200 || res.status !== 201) {
+          throw new Error('Failed')
+        }
+        return json()
+      })
+      .then(resData => {
+        console.log(resData)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   };
 
   render() {
@@ -34,7 +63,7 @@ class AuthPage extends Component {
         </div>
         <div className="form-actions">
           <button type="button" onClick={this.submitHandler}>Submit</button>
-          <button type="button">Switch to Signup</button>
+          <button type="button">Switch to Login</button>
         </div>
       </form>
     );
