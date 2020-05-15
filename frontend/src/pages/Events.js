@@ -7,7 +7,8 @@ import './Events.css';
 
 class EventsPage extends Component {
   state = {
-    createing: false
+    createing: false,
+    events: []
   };
 
   static contextType = AuthContext;
@@ -77,7 +78,8 @@ class EventsPage extends Component {
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
+        // console.log(resData);
+        this.fetchEvents();
       })
       .catch(err => {
         console.log(err);
@@ -107,8 +109,6 @@ class EventsPage extends Component {
         `
     };
 
-    const token = this.context.token;
-
     fetch('http://localhost:8000/graphql', {
       method: 'POST',
       body: JSON.stringify(requestBody),
@@ -123,7 +123,9 @@ class EventsPage extends Component {
         return res.json();
       })
       .then(resData => {
-        console.log(resData);
+        // console.log(resData);
+        const events = resData.data.events;
+        this.setState({ events: events })
       })
       .catch(err => {
         console.log(err);
@@ -132,6 +134,9 @@ class EventsPage extends Component {
 
 
   render() {
+    const eventList = this.state.events.map(event => {
+      return <li key={event._id} className="events__list-item">{event.title}</li>
+    })
     return (
       <React.Fragment>
         {this.state.creating && <Backdrop />}
@@ -167,8 +172,7 @@ class EventsPage extends Component {
           <button className="btn" onClick={this.startCreateEventHandler}>Create Event</button>
         </div>}
         <ul className="events__list">
-          <li className="events__list-item">Test</li>
-          <li className="events__list-item">Test</li>
+          {eventList}
         </ul>
       </React.Fragment>
     );
