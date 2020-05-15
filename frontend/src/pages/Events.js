@@ -20,6 +20,10 @@ class EventsPage extends Component {
     this.descriptionElRef = React.createRef();
   }
 
+  componentDidMount() {
+    this.fetchEvents();
+  }
+
   startCreateEventHandler = () => {
     this.setState({ creating: true });
   }
@@ -80,10 +84,52 @@ class EventsPage extends Component {
       })
   };
 
-
   modalCancelHandler = () => {
     this.setState({ creating: false });
   }
+
+  fetchEvents() {
+    const requestBody = {
+      query: `
+          query {
+            events {
+              _id
+              title
+              description
+              price
+              date
+              creator {
+                _id
+                email
+              }
+            }
+          }
+        `
+    };
+
+    const token = this.context.token;
+
+    fetch('http://localhost:8000/graphql', {
+      method: 'POST',
+      body: JSON.stringify(requestBody),
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(res => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error('Failed');
+        }
+        return res.json();
+      })
+      .then(resData => {
+        console.log(resData);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  };
+
 
   render() {
     return (
@@ -116,10 +162,14 @@ class EventsPage extends Component {
               </div>
             </form>
           </Modal>}
-        <div className="events-control">
+        {this.context.token && <div className="events-control">
           <p>Share your own events!</p>
           <button className="btn" onClick={this.startCreateEventHandler}>Create Event</button>
-        </div>
+        </div>}
+        <ul className="events__list">
+          <li className="events__list-item">Test</li>
+          <li className="events__list-item">Test</li>
+        </ul>
       </React.Fragment>
     );
   }
