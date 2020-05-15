@@ -9,8 +9,16 @@ const modal = props => (
     </header>
     <section className="modal__content">{props.children}</section>
     <section className="modal__actions">
-      {props.cacCancel && <button>Cancel</button>}
-      {props.canConfirm && <button>Confirm</button>}
+    {props.canCancel && (
+      <button className="btn" onClick={props.onCancel}>
+        Cancel
+      </button>
+    )}
+    {props.canConfirm && (
+      <button className="btn" onClick={props.onConfirm}>
+        Confirm
+      </button>
+    )}
     </section>
   </div>
 );
