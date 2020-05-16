@@ -47,16 +47,12 @@ class EventsPage extends Component {
     const requestBody = {
       query: `
           mutation {
-            createEvent(eventInput: {title: "${title}", description: "${description}", price: ${price}, date: "${date}"}){
+            createEvent(eventInput: {title: "${title}", description: "${description}", price: ${price}, date: "${date}"}) {
               _id
               title
               description
-              price
               date
-              creator {
-                _id
-                email
-              }
+              price
             }
           }
         `
@@ -80,7 +76,21 @@ class EventsPage extends Component {
       })
       .then(resData => {
         // console.log(resData);
-        this.fetchEvents();
+        // this.fetchEvents()
+        this.setState(prevState => {
+          const updatedEvents = [...prevState.events]
+          updatedEvents.push({
+            _id: resData.data.createEvent._id,
+            title: resData.data.createEvent.title,
+            description: resData.data.createEvent.description,
+            price: resData.data.createEvent.price,
+            date: resData.data.createEvent.date,
+            creator: {
+              _id: this.context.userId
+            }
+          });
+          return { events: updatedEvents };
+        })
       })
       .catch(err => {
         console.log(err);
