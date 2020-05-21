@@ -1,0 +1,125 @@
+
+mutation {
+  createUser(userInput: {email: "test@test.com", password: "tester"}) {
+    email
+    password
+  }
+}
+
+
+mutation {
+  createEvent(eventInput:{title:"Testing ", description:"This is a test", price: 5.99, date: "2020-05-12T08:48:26.539Z"}){
+    title
+    description
+    date
+  }
+}
+
+query {
+  events {
+    title
+    creator {
+      email
+    }
+  }
+}
+
+query {
+  events {
+    title
+    date
+    description
+    creator {
+      email
+    }
+  }
+}
+
+
+query {
+  events {
+    title
+    date
+    description
+    creator {
+      email
+      createdEvents {
+        title
+      }
+    }
+  }
+}
+
+mutation {
+  bookEvent(eventId: "5ebab9e82883195b4625f0f2"){
+    _id
+    createdAt
+  }
+}
+
+
+mutation {
+  bookEvent(eventId: "5ebab9e82883195b4625f0f2"){
+    _id
+    createdAt
+    user {
+      email
+    }
+  }
+}
+
+query {
+  bookings {
+    _id
+    createdAt
+    event {
+      title
+      creator {
+        email
+      }
+    }
+  }
+}
+
+mutation {
+  cancelBooking(bookingId: "5ebba70dc71518158c3cc350"){
+    title
+    creator {
+      email
+    }
+  }
+}
+
+mutation {
+  createEvent(eventInput: {title: "After refactoring", description:"test", price: 9.99, date: "2020-05-13T08:50:10.847Z"}){
+    _id
+    creator {
+      email
+    }
+  }
+}
+
+query {
+  events {
+    title
+    creator {
+      email
+      createdEvents {
+        _id
+      }
+    }
+  }
+}
+
+mutation {
+  bookEvent(eventId:"5eba6ebbd9a3db2372a80b92"){
+    _id
+    user{
+      _id
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+	"query": "mutation{ createEvent(eventInput: {title: \"Should work\", description: \"This now works!\", price: 8.9, date: \"2020-05-13T12:28:16.699Z\") {_id title }}"
