@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
@@ -8,6 +9,7 @@ const path = require('path');
 const graphQlSchema = require('./graphql/schema/index')
 const graphQlResolvers = require('./graphql/resolvers/index')
 
+app.use(cors());
 const app = express();
 const PORT = process.env.PORT || 8000;
 
