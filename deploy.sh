@@ -10,4 +10,4 @@ cd ..
 git add *
 git commit -m 'new automated build'
 git push -u
-git subtree push --prefix=bckend heroku master
+git subtree push --prefix=backend heroku master
