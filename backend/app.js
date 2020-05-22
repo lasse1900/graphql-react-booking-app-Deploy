@@ -3,11 +3,13 @@ const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const mongoose = require('mongoose');
 const isAuth = require('./middleware/is-auth');
+const path = require('path');
 
 const graphQlSchema = require('./graphql/schema/index')
 const graphQlResolvers = require('./graphql/resolvers/index')
 
 const app = express();
+const PORT = process.env.PORT || 8000;
 
 app.use(bodyParser.json());
 
@@ -32,13 +34,24 @@ app.use(
   })
 );
 
+app.use(express.static('public'));
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+});
+
 mongoose.connect(
-  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-itz0t.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}`
+  `mongodb+srv://${
+  process.env.MONGO_USER
+  }:${
+  process.env.MONGO_PASSWORD
+  }@cluster0-itz0t.mongodb.net/${
+  process.env.MONGO_DEFAULT_DATABASE
+  }`
 )
+
   .then(() => {
-    app.listen(8000);
+    app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
   })
   .catch(err => {
     console.log(err)
   })
-  
